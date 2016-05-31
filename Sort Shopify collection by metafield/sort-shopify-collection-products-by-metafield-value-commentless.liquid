@@ -1,0 +1,24 @@
+{% assign newArray = false %}
+{% assign zeroFill = '0000' %}
+{% assign zeroFillSize = zeroFill | size %}
+{% for product in collection.products %}
+	{% assign indexCharSize = forloop.index0 | append:'' | size %}
+	{% assign toSlice = zeroFillSize | minus:indexCharSize %}
+	{% assign tmpZeroFill = zeroFill | slice:0,toSlice %}
+	{% assign newOrder = product.metafields.global.order | default:'999999' %}
+	{% assign matrix = tmpZeroFill | append:newOrder | append:'.'  | append:forloop.index0 %}
+	{% if newArray %}
+		{% assign tmpIndex = matrix | split:',' %}
+		{% assign newArray = newArray | concat:tmpIndex %}
+	{% else %}
+		{% assign newArray = matrix | split:',' %}
+	{% endif %}
+{% endfor %}
+{% assign newArray = newArray | sort %}
+{% for newArrayItem in newArray %}
+	{% assign i = newArrayItem | split:'.' | last | times:1 %}
+	<div>
+		<h2>{{ collection.products[i].title }}</h2>
+		<p>My original index was {{ i }}, but now it is {{ forloop.index0 }}</p>
+	</div>
+{% endfor %}

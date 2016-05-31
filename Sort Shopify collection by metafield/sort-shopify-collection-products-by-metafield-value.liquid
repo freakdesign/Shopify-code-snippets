@@ -1,0 +1,97 @@
+{% comment %}
+	
+	========================================================================
+
+	Liquid by Jason @ freakdesign.
+	Questions? Ping me on twitter: @freakdesign
+
+	Experimental code to sort a products in a collection by metafield value.
+	Relates to this blog post: 
+	http://freakdesign.com.au/blogs/news/113614023-sort-products-in-a-shopify-collection-by-metafield-value-without-javascript
+
+	We assume that:
+	- the count of products is 50 or less
+	- that every single product has been given a unique sorting numbers. 
+
+	========================================================================
+
+{% endcomment %}
+
+{% comment %}
+	First set our new array to false...
+{% endcomment %}
+{% assign newArray = false %}
+
+{% comment %}
+	Set the starting zero fill. 
+	This is actually bigger than needed but that's ok...
+{% endcomment %}
+{% assign zeroFill = '0000' %}
+
+{% comment %}
+	Set the length of the zero fill. We could manually add this number, but for 
+	safety I am just getting Liquid to do it for me...
+{% endcomment %}
+{% assign zeroFillSize = zeroFill | size %}
+
+{% comment %}
+	Let's loop over the collection. We will not be using this to add anything 
+	to the page at this point. This is to help us build up the matrix to 
+	order by.
+{% endcomment %}
+{% for product in collection.products %}
+
+	{% comment %}
+		Get the length of the index
+	{% endcomment %}
+	{% assign indexCharSize = forloop.index0 | append:'' | size %}
+	{% assign toSlice = zeroFillSize | minus:indexCharSize %}
+
+	{% comment %}
+		Slice the zeroFill as needed
+	{% endcomment %}
+	{% assign tmpZeroFill = zeroFill | slice:0,toSlice %}
+
+	{% comment %}
+		If there is no metafield assign a giant value 
+		so that it gets pushed to the bottom
+	{% endcomment %}
+	{% assign newOrder = product.metafields.global.order | default:'999999' %}
+
+	{% comment %}
+		Build up the matrix. 
+		It will look like xxxx.y (eg:0012.31) where xxxx is our zeroFill and y is the current order.
+		This will hopefully make sense shortly...
+	{% endcomment %}
+	{% assign matrix = tmpZeroFill | append:newOrder | append:'.'  | append:forloop.index0 %}
+	{% if newArray %}
+		{% comment %}
+			add a new value to our existing array.
+		{% endcomment %}
+		{% assign tmpIndex = matrix | split:',' %}
+		{% assign newArray = newArray | concat:tmpIndex %}
+	{% else %}
+		{% comment %}
+			Create the array with our *first* matrix value
+		{% endcomment %}
+		{% assign newArray = matrix | split:',' %}
+	{% endif %}
+{% endfor %}
+
+{% comment %}
+	Sort the array. Add in a reverse filter if you need to go the other direction.
+	{% assign newArray = newArray | sort | reverse %}
+{% endcomment %}
+{% assign newArray = newArray | sort %}
+
+{% comment %}
+	Now that we have sorted the array we can loop over it grabbing each specific 
+	item using its index#.
+{% endcomment %}
+{% for newArrayItem in newArray %}
+	{% assign i = newArrayItem | split:'.' | last | times:1 %}
+	<div>
+		<h2>{{ collection.products[i].title }}</h2>
+		<p>My original index was {{ i }}, but now it is {{ forloop.index0 }}</p>
+	</div>
+{% endfor %}
