@@ -9,5 +9,5 @@ Refers to the [freakdesign blog post](http://freakdesign.com.au/blogs/news/11361
 Review the code, adapt the existing theme code to match...
 
 
-### Usage
+### Caveat
 This is only going to work if the collection has 50 or less products. So if your collection is bigger than that you're going to run into some weirdness. Keep em small peoples! 
