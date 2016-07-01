@@ -12,6 +12,7 @@
 	We assume that:
 	- the count of products is 50 or less
 	- that every single product has been given a unique sorting numbers. 
+	- the pagination on the collection is set to a number higher than the product count 
 
 	========================================================================
 
@@ -89,7 +90,7 @@
 	item using its index#.
 {% endcomment %}
 {% for newArrayItem in newArray %}
-	{% assign i = newArrayItem | split:'.' | last | times:1 %}
+	{% assign i = newArrayItem | split:'.' | last | abs %}
 	<div>
 		<h2>{{ collection.products[i].title }}</h2>
 		<p>My original index was {{ i }}, but now it is {{ forloop.index0 }}</p>

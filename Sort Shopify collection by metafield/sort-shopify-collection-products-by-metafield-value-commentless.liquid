@@ -16,7 +16,7 @@
 {% endfor %}
 {% assign newArray = newArray | sort %}
 {% for newArrayItem in newArray %}
-	{% assign i = newArrayItem | split:'.' | last | times:1 %}
+	{% assign i = newArrayItem | split:'.' | last | abs %}
 	<div>
 		<h2>{{ collection.products[i].title }}</h2>
 		<p>My original index was {{ i }}, but now it is {{ forloop.index0 }}</p>
