@@ -1,0 +1,96 @@
+{% comment %}
+/*
+ * Simple press grid snippet
+ *
+ * Copyright (c) 2016 Jason Bowman (jason@freakdesign.com.au)
+ * Licensed under the MIT license:
+ * http://www.opensource.org/licenses/mit-license.php
+ *
+ *
+ */ 
+{% endcomment %}
+{% for i in (1..1) %}
+
+  {% comment %}
+  	Define the blog that contains all our press posts
+  {% endcomment %}
+  {% assign pressHandle = 'press' %}
+
+  {% comment %}
+  	Check to make sure the blog has posts before going any further. If there are none found, show a simple message.
+  {% endcomment %}
+  {% if blogs[pressHandle].articles.size < 1 %}
+    <p>No publications found. Check back soon</p>
+    {% break %}
+  {% endif %}
+
+  {% comment %}
+  	The Variables below should be added to Theme Settings if you are building this into a theme for a client.
+  {% endcomment %}
+  {% assign showPressTitle = true %}
+
+  {% comment %} 
+    Show the plublished date for the article? Be sure to change the date to be the actual data of the press publication - not when you decided to publish the post on Shopify. 
+  {% endcomment %}
+  {% assign showPressDate = true %}
+
+  {% comment %} 
+    Show the article excerpt (if it exists)?
+  {% endcomment %}
+  {% assign showPressExcerpt = false %}
+
+  {% comment %} 
+    Add a link to the article?
+  {% endcomment %}
+  {% assign showPressLink = false %}
+
+  {% comment %} 
+    Define the image size. Change this to whatever size makes sense for your images.
+    https://help.shopify.com/themes/liquid/filters/url-filters#img_url
+  {% endcomment %}
+  {% assign pressImageSize = '370x480' %}
+
+  {% comment %}
+  	Basic styles for the example. You'll want to add your styles to the main stylesheet.
+  {% endcomment %}
+  <style>
+    .press-grid { margin-top: 2em }
+    .press-grid img { width:100%; }
+    .press-grid article { margin-bottom: 2em }
+    .press-grid h1 { font-size: 1em;margin: .1em 0 0;line-height: 1.1; }
+    .press-grid figure { margin:0; }
+    .press-grid .meta { font-size: .8em;text-transform: uppercase; }
+    .press-grid .excerpt { margin-top: .5em }
+  </style>
+
+  {% comment %}
+	  The grid structure used below is based off the one in the Venture theme. 
+	  You may need to adapt the code to match your grid.
+  {% endcomment %}
+  <section class="press-grid grid">
+    {% for article in blogs[pressHandle].articles limit:50 %}
+      {% assign gridSize = 'medium-up--one-third' %}
+      <article class="press-grid-item grid__item {{ gridSize }}">
+        {% if showPressLink %}<a href="{{ article.url }}">{% endif %}
+        <figure>
+          <img alt="{{ article.title }}" src="{{ article.image.src | img_url: pressImageSize, crop: 'center' }}" />
+        </figure>
+        {% if showPressTitle %}
+        	<h1>{{ article.title }}</h1>
+        {% endif %}
+        {% if showPressDate %}
+          <div class="meta">{{ article.published_at | date: "%a, %b %d, %y" }}</div>
+        {% endif %}
+        {% if showPressExcerpt and article.excerpt != blank %}
+          {% comment %} 
+            You could also use article.excerpt_or_content
+            https://help.shopify.com/themes/liquid/objects/article#article-excerpt_or_content
+          {% endcomment %}
+        	<div class="excerpt">{{ article.excerpt }}</div>
+        {% endif %}
+        {% if showPressLink %}</a>{% endif %}
+      </article>
+    {% endfor %}
+  </section>
+
+{% endfor %}
