@@ -1,4 +1,15 @@
 {%- layout none -%}
+{%- comment -%}
+/*
+ * Simple SKU Search Endpoint
+ *
+ * Copyright (c) 2016 Jason Bowman (jason@freakdesign.com.au)
+ * Licensed under the MIT license:
+ * http://www.opensource.org/licenses/mit-license.php
+ *
+ *
+ */ 
+{%- endcomment -%}
 {%- paginate search.results by 250 -%}
 {%- if search.performed -%}
 {"products": [
