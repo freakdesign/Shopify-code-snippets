@@ -1,0 +1,12 @@
+{%- layout none -%}
+{%- paginate search.results by 250 -%}
+{%- if search.performed -%}
+{"products": [
+	{%- for item in search.results -%}
+		{%- unless item.object_type == 'product' -%}{%- continue -%}{%- endunless -%}
+		{{- item | json -}}
+		{%- unless forloop.last %},{% endunless -%}
+	{%- endfor -%}
+]}
+{%- endif -%}
+{%- endpaginate -%}
