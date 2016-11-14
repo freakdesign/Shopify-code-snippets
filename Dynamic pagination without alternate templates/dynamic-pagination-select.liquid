@@ -1,0 +1,29 @@
+{%- comment -%}
+
+  The HTML / Liquid section for the <select> menu.
+  You'll add this into your theme in a place that makes sense.
+
+  Relates to the blog post here:
+  http://freakdesign.com.au/blogs/news/167340935-paginate-a-shopify-collection-by-dynamic-amounts-without-multiple-templates
+
+{%- endcomment -%}
+
+{%- comment -%} Make a label (for accessibility) {%- endcomment -%}
+<label for="paginateBy">Paginate By</label>
+<select name="paginateBy" id="paginateBy">
+  {%- comment -%}
+
+    We will support pagination from 1 all the way to 50.
+    If you wanted smaller ranges you could do something like this:
+
+    {%- assign paginationAmounts = '5,10,15,20,25' | split:',' -%}
+    {%- for i in paginationAmounts -%}
+       ...
+    {%- endfor -%}
+
+  {%- endcomment -%}
+  {% for i in (1..50) %}
+    {% assign v = i | append:'' %}
+    <option value="{{ v }}"{% if cart.attributes.pagination != blank and cart.attributes.pagination %}{% if cart.attributes.pagination == v %} selected{% endif %}{% else %}{% if i == 40 %} selected{% endif %}{% endif %}>{{ i }} per page</option>
+  {% endfor %}
+</select>

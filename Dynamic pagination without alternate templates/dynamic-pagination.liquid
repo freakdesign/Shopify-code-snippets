@@ -1,0 +1,20 @@
+{%- comment -%}
+
+  Relates to the blog post here:
+  http://freakdesign.com.au/blogs/news/167340935-paginate-a-shopify-collection-by-dynamic-amounts-without-multiple-templates
+
+{%- endcomment -%}
+
+{%- comment -%} Set the default pagination amount. You may want to hard code this in or use a theme setting. For simplicity we are just hard coding it. {%- endcomment -%}
+{%- assign paginationAmount = 40 -%}
+
+{%- comment -%} Check to see if we have a pagination cart attribute already set {%- endcomment -%}
+{%- if cart.attributes.pagination != blank -%}
+
+  {%- comment -%} If we do, use this value for the pagination instead {%- endcomment -%}
+  {%- assign paginationAmount = cart.attributes.pagination | default:40 | abs -%}
+
+{%- endif -%}
+{%- paginate collection.products by paginationAmount -%}
+  ...
+{%- endpaginate -%}
