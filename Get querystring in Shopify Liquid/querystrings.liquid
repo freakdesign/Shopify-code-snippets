@@ -1,0 +1,62 @@
+{%- comment -%}
+
+  Liquid by Jason @ freakdesign.
+  Questions? Ping me on twitter: @freakdesign
+
+  Relates to blog post:
+  http://freakdesign.com.au/blogs/news/get-the-url-querystring-values-with-liquid-in-shopify
+
+  Example:
+  https://jasons-experiments.myshopify.com/collections/all/products/3-4-sleeve-kimono-dress-coral-1?ref=freakdesign
+
+{%- endcomment -%}
+
+{%- comment -%} Capture the content for header containing the tracking data {%- endcomment -%}
+{%- capture contentForQuerystring -%}{{ content_for_header }}{%- endcapture -%}
+
+{% comment %} Use string splitting to pull the value from content_for_header and apply some string clean up {% endcomment %}
+{%- assign pageUrl = contentForQuerystring | split:'"pageurl":"' | last | split:'"' | first | split:'.myshopify.com' | last |
+   replace:'\/','/' | 
+   replace:'%20',' ' | 
+   replace:'\u0026','&'
+-%}
+{% assign debug = false %}
+{%- for i in (1..1) -%}
+  {%- comment -%} If the string doesn't contain a ? then we have no querystring. Go no further {%- endcomment -%}
+  {%- unless pageUrl contains "?" -%}{% break %}{%- endunless -%}
+
+  {%- comment -%} Split the url at the ? to get all values after it {%- endcomment -%}
+  {%- assign pageQuerystring = pageUrl | split:'?' | last -%}
+
+  {%- comment -%} Split the remaining string at & to get the list of keys and values (if any) {%- endcomment -%}
+  {%- assign parts = pageQuerystring | split:'&' -%}
+
+  {%- comment -%} Loop over them... {%- endcomment -%}
+  {%- for part in parts -%}
+
+    {%- comment -%} Split the part at the =. Not all querystrings will be in pairs so we need to account for that {%- endcomment -%}
+    {%- assign keyAndValue = part | split:'=' -%}
+
+    {%- if keyAndValue.size > 1 -%}
+      {%- if debug -%}
+      <!-- 
+        key: {{ keyAndValue[0] }}<br>
+        value: {{ keyAndValue[1] }}
+      -->
+      {% endif %}
+      {%- comment -%}And for an example. If the querystring key was "ref" and the value "freakdesign" do something {%- endcomment -%}
+      {% if keyAndValue[0] == "ref" and keyAndValue[1] == "freakdesign" %}
+      <p style="border: 1px solid currentColor;padding: 1em;">
+        Aw Yisss! You used my special referral url. Here's a discount code <span style="background: #30ffbb;display: inline-block;font-family: monospace;padding: 0 .5em;white-space: nowrap;">sdfe-342f-234ca-343f</span>.
+      </p>
+      {% endif %}
+    {%- else -%}
+     {%- if debug -%}
+      <!-- 
+        value: {{ keyAndValue }}
+      -->
+      {%- endif -%}
+    {%- endif -%}
+
+  {%- endfor -%}
+{%- endfor -%}
