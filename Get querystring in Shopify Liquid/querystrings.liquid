@@ -7,7 +7,7 @@
   http://freakdesign.com.au/blogs/news/get-the-url-querystring-values-with-liquid-in-shopify
 
   Example:
-  https://jasons-experiments.myshopify.com/collections/all/products/3-4-sleeve-kimono-dress-coral-1?ref=freakdesign
+  https://jasons-experiments.myshopify.com/collections/all/products/3-4-sleeve-kimono-dress-coral-1?ref=freakdesign&cache=false
 
 {%- endcomment -%}
 
@@ -24,6 +24,9 @@
 {%- for i in (1..1) -%}
   {%- comment -%} If the string doesn't contain a ? then we have no querystring. Go no further {%- endcomment -%}
   {%- unless pageUrl contains "?" -%}{% break %}{%- endunless -%}
+
+  {%- comment -%} Only work when the cache qs is used. Be aware of the perf issues with using cache=false {%- endcomment -%}
+  {%- unless pageUrl contains "cache=false" -%}{% break %}{%- endunless -%}
 
   {%- comment -%} Split the url at the ? to get all values after it {%- endcomment -%}
   {%- assign pageQuerystring = pageUrl | split:'?' | last -%}
