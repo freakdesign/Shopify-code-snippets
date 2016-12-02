@@ -1,7 +1,7 @@
 # Detect the search type in searches with Liquid
 Simple code to parse content from the `canonical_url` to grab the search type used.
 
-Relates to [Shopify Liquid Querystring](http://freakdesign.com.au/blogs/news/detect-the-search-type-used-in-a-shopify-search-with-liquid) post on the freakdesign blog. 
+Relates to [Detect Search Type](http://freakdesign.com.au/blogs/news/detect-the-search-type-used-in-a-shopify-search-with-liquid) post on the freakdesign blog. 
 
 
 ### Basic setup
