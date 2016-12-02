@@ -1,0 +1,17 @@
+{%- comment -%}
+
+  Liquid by Jason @ freakdesign.
+  Questions? Ping me on twitter: @freakdesign
+
+  Relates to blog post:
+  http://freakdesign.com.au/blogs/news/detect-the-search-type-used-in-a-shopify-search-with-liquid
+
+{%- endcomment -%}
+{%- capture url %}{{ canonical_url }}{% endcapture -%}
+{%- if url contains 'type=' -%}
+  {%- assign allowedTypes = 'product,page,article' | split:',' -%}
+  {%- assign searchType = url | split:'type=' | last | split:'&' | first | strip -%}
+  {%- if allowedTypes contains searchType -%}
+    This search type was for {{ searchType }}s
+  {%- endif -%}
+{%- endif -%}
