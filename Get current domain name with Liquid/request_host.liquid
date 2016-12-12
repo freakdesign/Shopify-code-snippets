@@ -1,0 +1,15 @@
+{%- comment -%}
+
+Very simple example showing how request.host can be used to show
+a different banner image. You can take this further to show custom
+text, collections, navigation, layouts, etc.
+
+{%- endcomment -%}
+
+{%- assign banner = "banner-default.jpg" -%}
+{%- if request.host == 'freakdesign.com.au' -%}
+	{%- assign banner = "banner-au.jpg" -%}
+{%- elsif request.host == 'freakdesign.com' -%}
+	{%- assign banner = "banner-com.jpg" -%}
+{%- endif -%}
+<img src="{{ banner | asset_url }}" />
