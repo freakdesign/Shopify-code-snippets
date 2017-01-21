@@ -1,0 +1,125 @@
+/*
+
+  Quick JS by Jason @ freakdesign to enable a persistent cart
+
+  Drop this into a Liquid template rather than a js.liquid or js asset. 
+  That's important since there's a hmac_sha256 filter that needs to run 
+  against the customer id.
+
+  Questions? Ping me on twitter: @freakdesign
+
+  Relates to blog post:
+  https://freakdesign.com.au/blogs/news/add-a-persistent-cart-to-shopify-without-apps
+
+  Example: (not yet, soon...)
+
+*/
+{%- if customer -%}
+
+	(function(){
+
+		"use strict";
+
+		/* In case you want to output a bunch of things to the debug console */
+		var debug = false;
+
+		/* the cookie value var */
+		var cartCookieValue;
+
+		/* you should leave this as is, but if you want to experiement with larger values you can */
+		var cookieExpireDays = 14;
+
+		/* 
+		IMPORTANT. 
+		YOU MUST CHANGE THE YOUR_SECRET_KEY VALUE BELOW TO SOMETHING ELSE.
+		The value will look something like this: 30ab3459e46e7b209b45dba8378fcbba67297304
+		*/
+		var customerCookieValue = {{ customer.id | hmac_sha256: "YOUR_SECRET_KEY" | json }};
+
+		/* A console logging function */
+		var log = function(a){
+			if(!debug){ return }
+			console.log(a);
+		};
+
+		/* get cookie by name */
+		var getCookie = function(name) {
+			var value = "; " + document.cookie;
+			var parts = value.split('; '+name+'=');
+			if (parts.length == 2) return parts.pop().split(";").shift();
+		};
+
+		/* update the cart cookie value */
+		var setCartCookie = function(a) {
+			var date = new Date();
+			date.setTime(date.getTime()+(cookieExpireDays*86400000));
+			var expires = '; expires='+date.toGMTString();
+			document.cookie = 'cart='+a+expires+'; path=/';
+		};
+
+		var init = function(){
+			/* get the current value of the cart cookie */
+			cartCookieValue = getCookie('cart');
+
+			if(!cartCookieValue){ 
+				/* cookie not found so we don't have a cart at all. Let's make a new one */
+				setCartCookie(customerCookieValue);
+				return;
+			}
+
+			if(cartCookieValue === cartCookieValue){
+				/* the customer is already using the correct cookie. Do nothing */
+				return;
+			}
+
+			/* 
+				If we've got this far we either don't have a cookie or the cookie is
+				already set to be hmac_sha256 value.
+
+				Cookies do not match. 
+				Do we have products already in the cart? 
+			*/
+			var xhr = new XMLHttpRequest();
+			xhr.open('GET', '/cart.js');
+			xhr.onload = function() {
+				if (xhr.status === 200) {
+					var cartJson = JSON.parse(xhr.responseText);
+					if(cartJson && cartJson.item_count){ 
+
+						/* 
+						Do nothing as there's already items in the cart.
+
+						If you want to extend the code this is where you'd take the items 
+						in the current cart and move them into the persistant cart. In other
+						words - change the cookie value and re-add all the existing products.
+						*/
+						return;
+					}
+
+					/* 
+						we don't have items in the cart so this means that we can easily 
+						change the cart cookie value.
+
+						Once set, all products added will be to a cart with this value.
+						(in theory)
+					*/
+					setCartCookie(customerCookieValue);
+
+					/*
+						With the cookie value changed the next step would be to check to see
+						if the cart now has products or not. If it does, it would be worth 
+						reloading the page (or better - trigger an on screen cart notifications).
+
+						Visit the cart page manually for now and see if you have items from the
+						other shipping session.
+					*/
+				}
+			};
+			xhr.send();
+		}
+
+		init();
+
+	})();
+
+{%- endif -%}
