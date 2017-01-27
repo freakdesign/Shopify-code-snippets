@@ -67,7 +67,7 @@
 				return;
 			}
 
-			if(cartCookieValue === cartCookieValue){
+			if(cartCookieValue === customerCookieValue){
 				/* the customer is already using the correct cookie. Do nothing */
 				return;
 			}
@@ -116,7 +116,7 @@
 				}
 			};
 			xhr.send();
-		}
+		};
 
 		init();
 
