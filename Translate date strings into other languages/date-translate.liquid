@@ -1,0 +1,73 @@
+{%- comment -%}
+<!--
+
+     _       _         _                       _       _
+  __| | __ _| |_ ___  | |_ _ __ __ _ _ __  ___| | __ _| |_ ___
+ / _` |/ _` | __/ _ \ | __| '__/ _` | '_ \/ __| |/ _` | __/ _ \
+| (_| | (_| | ||  __/ | |_| | | (_| | | | \__ \ | (_| | ||  __/
+ \__,_|\__,_|\__\___|  \__|_|  \__,_|_| |_|___/_|\__,_|\__\___|
+
+
+Date translation snippet for Shopify without using Locale json.
+(This could be adapted for any translation needs)
+Written by Jason @freakdesign
+
+usage:
+{%- include dateTranslate, dateString:article.published_at language:'French' -%}
+
+or
+
+{%- assign newDate = 'now' | date:'%A %B %d, %Y' -%}
+{%- include dateTranslate, dateString:newDate language:'Norwegian' -%}
+
+-->
+{%- endcomment -%}
+
+{%- for i in (1..1) -%}
+
+  {%- assign debug = false -%}
+  {%- assign datesSupported = 'English,Norwegian,French,Spanish' | split:',' -%}
+  {%- assign dateFormat = format | default:'%A %B %d, %Y' -%}
+
+  {%- if debug -%}
+    {%- assign language = 'French' -%}
+    {%- assign dateString = 'now' | date:dateFormat -%}
+  {%- endif -%}
+  
+  {%- if dateString == blank or language == blank -%}{% break %}{%- endif -%}
+  {%- unless datesSupported contains language -%}{% break %}{%- endunless -%}
+
+  {%- assign daysEnglish = 'Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday' | split:',' -%}
+  {%- assign monthsEnglish = 'January,February,March,April,May,June,July,August,September,October,November,December' | split:',' -%}
+
+  {%- assign daysNorwegian = 'mandag,tirsdag,onsdag,torsdag,fredag,lørdag,søndag' | split:',' -%}
+  {%- assign monthsNorwegian = 'januar,februar,mars,april,mai,juni,juli,august,september,oktober,november,desember' | split:',' -%}
+
+  {%- assign daysFrench = 'lundi,mardi,mercredi,jeudi,vendredi,samedi,dimanche' | split:',' -%}
+  {%- assign monthsFrench = 'janvier,février,mars,avril,mai,juin,juillet,août,septembre,octobre,novembre,décembre' | split:',' -%}
+
+  {%- assign daysSpanish = 'lunes,martes,miércoles,jueves,viernes,sábado,domingo' | split:',' -%}
+  {%- assign monthsSpanish = 'enero,febrero,marzo,abril,mayo,junio,julio,agosto,septiembre,octubre,noviembre,diciembre' | split:',' -%}
+
+  {%- assign currentDays = 'days' | append:language -%}
+  {%- assign currentMonths = 'months' | append:language -%}
+
+  {%- assign currentDaysArray = [currentDays] -%}
+  {%- assign currentMonthsArray = [currentMonths] -%}
+
+  {%- assign shortSlice = 3 -%}
+  
+  {%- for _i in (0..11) -%}
+    {%- if _i < 7 -%}
+      {%- assign shortDateFormatEnglish = daysEnglish[_i] | slice:0,shortSlice -%}
+      {%- assign shortDateFormatCurrent = currentDaysArray[_i] | slice:0,shortSlice -%}
+      {%- assign dateString = dateString | replace:daysEnglish[_i],currentDaysArray[_i] | replace:shortDateFormatEnglish,shortDateFormatCurrent -%}
+    {%- endif -%}
+    {%- assign shortMonthFormatEnglish = monthsEnglish[_i] | slice:0,shortSlice -%}
+    {%- assign shortMonthFormatCurrent = currentMonthsArray[_i] | slice:0,shortSlice -%}
+    {%- assign dateString = dateString | replace:monthsEnglish[_i],currentMonthsArray[_i] | replace:shortMonthFormatEnglish,shortMonthFormatCurrent -%}
+  {%- endfor -%}
+
+  {{- dateString -}}
+
+{%- endfor -%}
