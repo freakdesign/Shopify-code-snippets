@@ -1,0 +1,8 @@
+{%- for link in linklists.test-this.links -%}
+  {%- assign collection = link.object -%}
+  {%- if collection.published_at == blank -%}
+    <p>{{ collection.title }} is not published</p>
+  {%- else -%}
+    <p>{{ collection.title }} is published</p>
+  {%- endif %}
+{%- endfor -%}
