@@ -1,0 +1,34 @@
+{%- for article in blog.scheduler.articles limit:1 -%}
+  
+  {%- comment -%}
+  	Get the handle from the excerpt and remove and surrounding whitespace
+  {%- endcomment -%}
+  {%- assign collectionHandle = article.excerpt | strip -%}
+
+  {%- comment -%}
+  	Make sure we don't have an empty string. If we do, stop!
+  {%- endcomment -%}
+  {% if collectionHandle.length < 1 or collectionHandle == blank %}{% break %}{% endif %}
+
+  {%- comment -%}
+  	Do we have a real collection? If not, stop!
+  {%- endcomment -%}
+  {% assign featuredCollection = collections[collectionHandle] %}
+  {% if featuredCollection.products.size < 1 %}{% break %}{% endif %}  
+
+  {%- comment -%}
+  	We have a real collection with products. 
+  	Let's show 6 products from the collection. Only a very simple example is shown here - nothing pretty...
+  {%- endcomment -%}
+
+
+  <section class="scheduled-collection">
+    {%- for featureProduct in featuredCollection.products limit:6 -%}
+      <article>
+        <p>{{ featureProduct.title }}</p>
+        <p><a href="{{ featureProduct.url }}">View the product</a></p>
+      </article>
+    {% endfor %}
+  </section>
+
+{%- endfor -%}
