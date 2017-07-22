@@ -1,0 +1,186 @@
+{%- comment -%}
+
+
+  get-reviews.liquid
+  ==================
+
+  The code relates to the blog post below.
+  https://freakdesign.com.au/blogs/news/show-multiple-shopify-product-reviews-on-one-page
+
+
+{%- endcomment -%}
+
+
+
+{%- assign collectionHandle = 'reviews' -%}
+<div id="multipleReviews"></div>
+
+
+{%- comment -%}
+  Now add some styles to the page.You could move the styles 
+  into your stylesheet if you don't want them here... 
+{%- endcomment -%}
+<style>
+
+
+  #multipleReviews {
+    background: #f7f7f7;
+    padding: 0 1em;
+  }
+
+  @media only screen and (min-width: 750px){
+    .product-review {
+      width: 50%;
+    }
+  }
+
+  .product-review {
+    display: inline-block;
+    vertical-align: top;
+    margin: 4vh 0;
+  }
+
+  .product-review .spr-icon {
+    width: .5em;
+    height: .5em;
+    background: #30ffbb;
+    display: inline-block;
+    border-radius: 50%;
+    margin-right: .25em;
+  }
+
+  .product-review .spr-icon-star-empty {
+    background: #ddd;
+  }
+
+  .product-review-stars { display: inline-block; }
+
+  span.product-review-title {
+    font-weight: 400;
+    display: block;
+    font-family: "Unica One", sans-serif;
+    color: #242e2f;
+    font-size: 1.3em;
+    text-transform: uppercase;
+    line-height: 1.04;
+  }
+
+  .product-review-reviewer {
+    font-size: 80%;
+    font-style: italic;
+    display: block;
+  }
+</style>
+<script>
+
+(function(){
+
+  window.reviewApp = window.reviewApp || {
+    debug:false,
+    reviews:[],
+    reviewUrl:'https://productreviews.shopifycdn.com/proxy/v4/reviews/',
+    reviewStore:{{ shop.permanent_domain | json }}, /* or hard code the myshopify url - eg: freakdesign.myshopify.com */
+  };
+
+  window.reviewApp.translations = {
+    'missing_id':'Product ID array not defined',
+    'script_exists':'The script has already been loaded on the page'
+  };
+
+  window.reviewApp.productIdList = [
+    {%- for reviewProduct in collections[collectionHandle].products limit:10 -%}
+      {{- reviewProduct.id -}}
+      {%- unless forloop.last -%},{%- endunless -%}
+    {%- endfor -%}
+  ];
+  
+  reviewApp.errLog = function(t){
+    if(!reviewApp.debug){ return }
+    console.warn(reviewApp.translations[t])
+  };
+
+  var getBadges = function(a){
+
+    if(typeof a === 'undefined'){ errLog('missing_id');return }
+    if(!!document.getElementById('reviewBadges')){ errLog('script_exists');return }
+
+    window.badgesLoaded = function(a){
+      console.log(a);
+    };
+
+    var idString = [];
+    for (var i = a.length - 1; i >= 0; i--) {
+      idString.push('&product_ids[]='+a[i]);
+    };
+
+    var script = document.createElement("script");
+    script.id = "reviewBadges";
+    script.async = true;
+    script.src = [window.reviewApp.reviewUrl,'badges?callback=badgesLoaded&shop=',window.reviewApp.reviewStore,idString.join('')].join('');
+    document.body.appendChild(script);
+
+  };
+
+  window.reviewLoaded = function(a){
+
+    window.reviewApp.reviews.push(a);
+    if(window.reviewApp.productIdList.length){ 
+      reviewApp.getReviews(window.reviewApp.productIdList);
+      return;
+    };
+
+    
+    
+    for (var i = window.reviewApp.reviews.length - 1; i >= 0; i--) {
+
+      var tmpDiv = document.createElement('div');
+      tmpDiv.innerHTML = window.reviewApp.reviews[i].reviews;
+
+      var reviewText = tmpDiv.querySelectorAll('.spr-review-content');
+      var reviewer = tmpDiv.querySelectorAll('.spr-review-header-byline');
+      var title = tmpDiv.querySelectorAll('.spr-review-header-title');
+      var rating = tmpDiv.querySelectorAll('.spr-starratings');
+
+      console.log(window.reviewApp.reviews[i].reviews,reviewText.length);
+
+      for (var _i = reviewText.length - 1; _i >= 0; _i--) {
+        var divHtml = '';
+        divHtml+= [
+        '<div class="product-review"><span class="product-review-title">',
+        title[_i].innerText,
+        '</span><span class="product-review-text">',
+        reviewText[_i].innerText,
+        '</span><span class="product-review-stars">',
+        rating[_i].innerHTML,
+        '</span><span class="product-review-reviewer">',
+        reviewer[_i].innerText,
+        '</span></div>'
+        ].join('');
+        document.getElementById('multipleReviews').insertAdjacentHTML('beforeend',divHtml);
+      };
+
+    };
+
+  };
+
+  window.reviewApp.getReviews = function(a){
+
+    if(typeof a === 'undefined'){ errLog('missing_id');return }
+    var productId = a.shift();
+    var script = document.createElement("script");
+
+    if(document.getElementById('singleReviewData')){
+      document.getElementById('singleReviewData').remove(); /* cleanup (optional) */
+    }
+    
+    script.id = 'singleReviewData';
+    script.async = true;
+    script.src = [window.reviewApp.reviewUrl,'product?callback=reviewLoaded&shop=',window.reviewApp.reviewStore,'&product_id=',productId].join('');
+    document.body.appendChild(script);
+
+  };
+
+  reviewApp.getReviews(window.reviewApp.productIdList);
+
+})();
+</script>
