@@ -1,0 +1,28 @@
+{%- comment -%}
+
+  Grab some article handles from a metafield.
+  Loop over the handles, showing the article title on the page.
+
+  For this example the metafield is stored on another article:
+  Namespace: related
+  Key: articles
+  Value: (comma seperated string)
+
+{%- endcomment -%}
+
+{%- if article.metafields.related.articles != blank -%}
+  {%- assign relatedArticleArray = article.metafields.related.articles | split:',' -%}
+  
+  <div class="article-grid">
+  {%- for relatedArticleValue in relatedArticleArray -%}
+
+    {%- assign relatedArticleHandle = relatedArticleValue | strip -%}
+    {%- assign a = articles[relatedArticleHandle] -%}
+    {%- if a.title == blank -%}{% continue %}{%- endif -%}
+
+    <div>{{ a.title }}</div>
+
+  {%- endfor -%}
+  </div>       
+
+{%- endif -%}
