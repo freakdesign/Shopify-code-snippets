@@ -1,0 +1,16 @@
+{%- assign cardPrice = gift_card.initial_value -%}
+{%- assign giftCardProduct = linklists.admin-gift-card.links.first.object -%}
+{%- assign customImage = 'gift-card/card.jpg' | shopify_asset_url -%}
+{%- for variant in giftCardProduct.variants -%}
+  {%- if variant.price != cardPrice %}{% continue %}{% endif -%}
+  {%- if variant.image.src == blank %}{% break %}{% endif -%}
+  {%- assign customImage = variant.image | img_url:'949x' -%}
+  {%- break -%}
+{%- endfor -%}
+
+
+{%- comment -%}
+  Somewhere in your template you'll have the image shown. Instead of hard coding in
+  the source, we replace that with the variable we created above.
+{%- endcomment -%}
+<img class="giftcard__image" src="{{ customImage }}" alt="Gift card illustration">
