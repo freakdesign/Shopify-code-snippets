@@ -1,0 +1,9 @@
+{% assign stringToCheck = 'freakdesign' %}
+{% assign startsWith = 'freak' %}
+{% assign checkArray = stringToCheck | split:startsWith %}
+
+{% if checkArray[0] == blank %}
+  The string {{ stringToCheck }} does start with {{ startsWith }}.
+{% else %}
+  The string {{ stringToCheck }} does NOT start with {{ startsWith }}.
+{% endif %}
