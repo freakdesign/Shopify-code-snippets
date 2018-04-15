@@ -1,0 +1,4 @@
+{%- assign cartJson = cart | json -%}
+{%- assign cartToken = cartJson | split:'token":"' | last | split:'"' | first -%}
+
+My cart token is {{ cartToken }}.
