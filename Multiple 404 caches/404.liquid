@@ -1,0 +1,70 @@
+{%- comment -%}
+Relates to https://freakdesign.com.au/blogs/news/could-multiple-404-pages-be-better-than-one
+{%- endcomment -%}
+
+<div class="xpage-empty text-center">
+
+	{%- comment -%} Grab the current path {%- endcomment -%}
+	{%- assign pathDetails = request.path | split:'/' -%}
+
+	{%- comment -%} Set the current cache type variable to `default` {%- endcomment -%}
+	{%- assign cacheType = 'default' -%}
+
+	{%- comment -%} Let's break down the path to work out the type {%- endcomment -%}
+	{%- if pathDetails.size < 3 -%}
+		{%- assign cacheType = "A" -%}
+	{%- elsif pathDetails[1] == 'account' -%}
+		{%- assign cacheType = "A" -%}
+	{%- elsif pathDetails[1] == 'collections' or pathDetails[1] == 'products' -%}
+		{%- assign cacheType = "B" -%}
+	{%- elsif pathDetails[1] == 'pages' -%}
+		{%- assign cacheType = "C" -%}
+	{%- elsif pathDetails[1] == 'a' or pathDetails[1] == 'apps' -%}
+		{%- assign cacheType = "D" -%}
+	{%- endif -%}
+
+	{%- comment -%} Optional: show different heading text based on cache type {%- endcomment -%}
+	{%- if cacheType == 'default' -%}
+		<h1>{{ 'general.404.title' | t }}</h1>
+	{%- else -%}
+		<h1><div style="font-size:400%">404</div> <span>Cache type {{ cacheType }}<span></h1>
+	{%- endif -%}
+
+	{%- comment -%}
+		Time to show different content based on the type.
+		I'm opting to use snippets for most of the different content but nothing stopping
+		you from just adding in the info directly. I find it's neater this way.
+	{%- endcomment -%}
+
+	{%- case cacheType -%}
+	{%- when 'A' -%}
+		{%- comment -%} 
+			Some fun if there's a very specific url used 
+			On the experiements site the page title also changes but that code isn't shown here
+		{%- endcomment -%}
+		{%- if request.path == '/secret' -%}
+			<img src="https://media.giphy.com/media/NdKVEei95yvIY/source.gif" />
+		{%- else -%}
+			{%- include '404-root' -%}
+		{%- endif -%}
+	{%- when 'B' -%}
+		{%- include '404-collection' -%}
+	{%- when 'C' -%}
+		{%- include '404-page' -%}
+	{%- when 'D' -%}
+		{%- include '404-app' -%}
+	{%- else -%}
+		<p>{{ 'general.404.subtext_html' | t }}</p><hr>
+		<p><a href="/" class="btn">{{ 'general.404.404_link' | t }}</a></p>
+	{%- endcase -%}
+
+	{%- comment -%} Add some debug/insights to help those following along this crazy adventure {%- endcomment -%}
+	<div>
+		<small>
+		URL at cache time: {{ request.path }}<br>
+		pathDetails.size: {{ pathDetails.size }}<br>
+		pathDetails[1]: {{ pathDetails[1] }}<br>
+		cacheType: {{ cacheType }}<br>
+		</small>
+	</div>
+</div>

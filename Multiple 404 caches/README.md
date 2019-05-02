@@ -1,0 +1,2 @@
+# Doing silly things with cached results of 404 pages.
+Relates to the [Could multiple 404 pages be better than one?](https://freakdesign.com.au/blogs/news/could-multiple-404-pages-be-better-than-one) post on the freakdesign blog.
