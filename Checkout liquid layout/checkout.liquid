@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0, user-scalable=0">
     <meta name="referrer" content="origin">
 
-    <title>{{ shop.name }} - {{ page_title }}</title>
+    <title>{{ page_title }}</title>
 
     {{ content_for_header }}
 
@@ -14,6 +14,8 @@
     {{ checkout_scripts }}
   </head>
   <body>
+    {{ skip_to_content_link }}
+
     <div class="banner" data-header>
       <div class="wrap">
         {{ content_for_logo }}
@@ -24,14 +26,6 @@
 
     <div class="content" data-content>
       <div class="wrap">
-        <div class="sidebar" role="complementary">
-          <div class="sidebar__header">
-            {{ content_for_logo }}
-          </div>
-          <div class="sidebar__content">
-            {{ content_for_order_summary }}
-          </div>
-        </div>
         <div class="main" role="main">
           <div class="main__header">
             {{ content_for_logo }}
@@ -43,6 +37,14 @@
           </div>
           <div class="main__footer">
             {{ content_for_footer }}
+          </div>
+        </div>
+        <div class="sidebar" role="complementary">
+          <div class="sidebar__header">
+            {{ content_for_logo }}
+          </div>
+          <div class="sidebar__content">
+            {{ content_for_order_summary }}
           </div>
         </div>
       </div>
