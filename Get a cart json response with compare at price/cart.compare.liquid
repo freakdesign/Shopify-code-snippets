@@ -1,0 +1,55 @@
+{%- layout none -%}
+{%- assign cartJson = cart | json -%}
+{%- assign cartToken = cartJson | split:'token":"' | last | split:'"' | first | json -%}
+{
+	"token": {{ cartToken }},
+	"note": {{ cart.note | json }},
+	"attributes": {{ cart.attributes | json }},
+	"original_total_price": {{ cart.original_total_price | json }},
+	"total_price": {{ cart.total_price | json }},
+	"total_discount": {{ cart.total_discount | json }},
+	"total_weight": {{ cart.total_weight | json }},
+	"item_count": {{ cart.item_count | json }},
+	"items": [
+		{%- for item in cart.items -%}
+		{
+		"id": {{ item.id | json }},
+		"properties": {
+			{%- for prop in item.properties -%}
+			{{ prop | first | json }}:{{ prop | last | json }}{% unless forloop.last %},{% endunless %}
+			{%- endfor %}
+		},
+		"quantity": {{ item.quantity | json }},
+		"variant_id": {{ item.variant_id | json }},
+		"key": {{ item.key | json }},
+		"title": {{ item.title | json }},
+		"compare_at_price": {{ item.variant.compare_at_price | json }},
+		"price": {{ item.price | json }},
+		"original_price": {{ item.original_price | json }},
+		"discounted_price": {{ item.line_price | json }},
+		"line_price": {{ item.line_price | json }},
+		"original_line_price": {{ item.original_line_price | json }},
+		"total_discount": {{ item.total_discount | json }},
+		"discounts": {{ item.discounts | json }},
+		"sku": {{ item.sku | json }},
+		"grams": {{ item.grams | json }},
+		"vendor": {{ item.vendor | json }},
+		"taxable": {{ item.taxable | json }},
+		"product_id": {{ item.product_id | json }},
+		"gift_card": {{ item.gift_card | json }},
+		"url": {{ item.url | json }},
+		"image": {{ item.variant.image | json }},
+		"handle": {{ item.product.handle | json }},
+		"requires_shipping": {{ item.requires_shipping | json }},
+		"product_type": {{ item.product.type | json }},
+		"product_title": {{ item.product.title | json }},
+		"product_description": {{ item.product.description | json }},
+		"variant_title": {{ item.variant.title | json }},
+		"variant_options": {{ item.variant.options | json }}
+		}{% unless forloop.last %},{% endunless %}
+		{%- endfor -%}
+	],
+	"currency": {{ cart.currency.iso_code | json }},
+	"items_subtotal_price": {{ cart.items_subtotal_price | json }},
+	"cart_level_discount_applications": {{ cart.cart_level_discount_applications | json }}
+}
