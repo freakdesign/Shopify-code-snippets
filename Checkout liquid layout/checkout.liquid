@@ -16,37 +16,36 @@
   <body>
     {{ skip_to_content_link }}
 
-    <div class="banner" data-header>
+    <header class="banner" data-header role="banner">
       <div class="wrap">
         {{ content_for_logo }}
       </div>
-    </div>
+    </header>
 
     {{ order_summary_toggle }}
-
     <div class="content" data-content>
       <div class="wrap">
-        <div class="main" role="main">
-          <div class="main__header">
+        <div class="main">
+          <header class="main__header" role="banner">
             {{ content_for_logo }}
             {{ breadcrumb }}
             {{ alternative_payment_methods }}
-          </div>
-          <div class="main__content">
+          </header>
+          <main class="main__content" role="main">
             {{ content_for_layout }}
-          </div>
-          <div class="main__footer">
+          </main>
+          <footer class="main__footer" role="contentinfo">
             {{ content_for_footer }}
-          </div>
+          </footer>
         </div>
-        <div class="sidebar" role="complementary">
+        <aside class="sidebar" role="complementary">
           <div class="sidebar__header">
             {{ content_for_logo }}
           </div>
           <div class="sidebar__content">
             {{ content_for_order_summary }}
           </div>
-        </div>
+        </aside>
       </div>
     </div>
 
