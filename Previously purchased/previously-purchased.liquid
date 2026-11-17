@@ -1,0 +1,33 @@
+{%- comment -%}
+  Show the latest matching purchase on the first page of customer orders.
+  A larger page size should be verified with a customer who has enough orders.
+{%- endcomment -%}
+{%- if customer and product -%}
+  {%- assign last_purchase_at = blank -%}
+  {%- assign last_purchase_timestamp = 0 -%}
+  {%- paginate customer.orders by 20 -%}
+    {%- if paginate.current_page == 1 -%}
+      {%- for past_order in customer.orders -%}
+        {%- if past_order.cancelled or past_order.financial_status == 'refunded' or past_order.financial_status == 'voided' -%}
+          {%- continue -%}
+        {%- endif -%}
+        {%- for item in past_order.line_items -%}
+          {%- if item.product_id == product.id -%}
+            {%- assign purchased_at = past_order.created_at | date: '%s' | plus: 0 -%}
+            {%- if purchased_at > last_purchase_timestamp -%}
+              {%- assign last_purchase_timestamp = purchased_at -%}
+              {%- assign last_purchase_at = past_order.created_at -%}
+            {%- endif -%}
+            {%- break -%}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endfor -%}
+    {%- endif -%}
+  {%- endpaginate -%}
+  {%- if last_purchase_at != blank -%}
+    <aside class="previously-purchased" aria-label="Previous purchase">
+      <strong>You've purchased this before</strong>
+      <p>You bought this product on <time datetime="{{ last_purchase_at | date: '%Y-%m-%d' }}">{{ last_purchase_at | date: '%-d %B %Y' }}</time>.</p>
+    </aside>
+  {%- endif -%}
+{%- endif -%}
