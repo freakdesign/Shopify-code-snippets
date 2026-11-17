@@ -10,6 +10,6 @@ Copy `previously-purchased.liquid` into your theme’s `snippets` directory and 
 
 Cancelled, fully refunded and voided orders are skipped. Refunds are checked at the order level, so a refunded item on a partially refunded order can still count. Older purchases can fall outside the order window.
 
-The signed-in Shopify storefront test is pending. Before adding it to your live theme, try a guest, a signed-in customer with no matching order and a customer with a known purchase in a theme preview.
+Tested in an unpublished Freakdesign theme. The note showed the expected purchase date when signed in and disappeared when signed out. On your own theme, also check a signed-in customer with no matching purchase.
 
 [Read the tutorial](https://freakdesign.com.au/blogs/news/show-previous-purchases-on-shopify-product-pages) · [Try the interactive demo](https://freakdesign.com.au/pages/previously-purchased-demo)
